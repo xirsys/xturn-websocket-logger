@@ -21,7 +21,7 @@ defmodule XTurn.WebSocketLogger.MixProject do
   end
 
   def application do
-    [mod: {XTurn.WebsocketLogger, []}, applications: []]
+    [mod: {Xirsys.XTurn.WebSocketLogger.Supervisor, []}, applications: []]
   end
 
   defp deps do

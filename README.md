@@ -1,21 +1,28 @@
-# XturnWebsocketLogger
+# XTurn WebSocket Logger
 
-**TODO: Add description**
+Adds a WebSocket hook to the XTurn server that outputs parsed messages.  Useful to debug WebRTC applications.
+
+THIS IS CURRENTLY A WORK IN PROGRESS
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `xturn_websocket_logger` to your list of dependencies in `mix.exs`:
+Add the following to the XTurn `mix.exs` files list of dependencies.
 
 ```elixir
 def deps do
   [
-    {:xturn_websocket_logger, "~> 0.1.0"}
+    ...
+    {:xturn_websocket_logger, git: "https://github.com/xirsys/xturn-websocket-logger"}
   ]
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/xturn_websocket_logger](https://hexdocs.pm/xturn_websocket_logger).
+Then, add `:xturn_websocket_logger` to the list of applications.
 
+```elixir
+  def application() do
+    [
+      applications: [:crypto, :sasl, :logger, :ssl, :xmerl, :exts, :xturn_websocket_logger],
+```
+
+Finally, in the XTurn `config/config.exs`, add `Xirsys.XTurn.WebSocketLogger.Client` to the `client_hooks` list.
