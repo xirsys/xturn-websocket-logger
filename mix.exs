@@ -5,7 +5,7 @@ defmodule XTurn.WebSocketLogger.MixProject do
     [
       app: :xturn_websocket_logger,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.6.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
