@@ -66,10 +66,29 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
     {:ok, state}
   end
 
-  defp parse_msg(%Xirsys.Sockets.Conn{client_ip: {a, b, c, d}, client_port: cport, message: <<@stun_marker::2, _::14, _rest::binary>> = msg}),
-    do: %{type: "stun", client_ip: "#{a}.#{b}.#{c}.#{d}", client_port: cport, message: "#{inspect Stun.decode(msg)}"} |> Jason.encode!()
-  defp parse_msg(%Xirsys.Sockets.Conn{client_ip: {a, b, c, d}, client_port: cport, message: <<1::2, _num::14, _length::16, _rest::binary>>}),
-    do: %{type: "channel", client_ip: "#{a}.#{b}.#{c}.#{d}", client_port: cport} |> Jason.encode!()
+  defp parse_msg(%Xirsys.Sockets.Conn{
+         client_ip: {a, b, c, d},
+         client_port: cport,
+         message: <<@stun_marker::2, _::14, _rest::binary>> = msg
+       }),
+       do:
+         %{
+           type: "stun",
+           client_ip: "#{a}.#{b}.#{c}.#{d}",
+           client_port: cport,
+           message: "#{inspect(Stun.decode(msg))}"
+         }
+         |> Jason.encode!()
+
+  defp parse_msg(%Xirsys.Sockets.Conn{
+         client_ip: {a, b, c, d},
+         client_port: cport,
+         message: <<1::2, _num::14, _length::16, _rest::binary>>
+       }),
+       do:
+         %{type: "channel", client_ip: "#{a}.#{b}.#{c}.#{d}", client_port: cport}
+         |> Jason.encode!()
+
   defp parse_msg(msg) when is_binary(msg), do: msg
-  defp parse_msg(msg), do: "TODO, #{inspect msg}"
+  defp parse_msg(msg), do: "TODO, #{inspect(msg)}"
 end
