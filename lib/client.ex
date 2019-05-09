@@ -70,15 +70,20 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
          client_ip: {a, b, c, d},
          client_port: cport,
          message: <<@stun_marker::2, _::14, _rest::binary>> = msg
-       }),
-       do:
-         %{
-           type: "stun",
-           client_ip: "#{a}.#{b}.#{c}.#{d}",
-           client_port: cport,
-           message: "#{inspect(Stun.decode(msg))}"
-         }
-         |> Jason.encode!()
+       }) do
+    case Stun.decode(msg) do
+      {:ok, dec_msg} ->
+        %{
+          type: "stun",
+          client_ip: "#{a}.#{b}.#{c}.#{d}",
+          client_port: cport,
+          message: "#{inspect(dec_msg)}"
+        }
+        |> Jason.encode!()
+    else
+      _ -> "Failed to parse message"
+    end
+  end
 
   defp parse_msg(%Xirsys.Sockets.Conn{
          client_ip: {a, b, c, d},
