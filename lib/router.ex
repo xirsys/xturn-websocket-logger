@@ -22,41 +22,34 @@
 ###
 ### ----------------------------------------------------------------------
 
-defmodule Xirsys.XTurn.WebSocketLogger.Supervisor do
-  use Application
-  require Logger
+defmodule Xirsys.XTurn.WebSocketLogger.Router do
+  use Plug.Router
+  require EEx
 
-  def start(_type, _args) do
-    import Supervisor.Spec
-    Logger.info("starting auth client")
+  plug(
+    Plug.Static,
+    at: "/",
+    from: :xturn_websocket_logger
+  )
 
-    children = [
-      worker(Xirsys.XTurn.WebSocketLogger.Client, []),
-      Plug.Cowboy.child_spec(
-        scheme: :http,
-        plug: Xirsys.XTurn.WebSocketLogger.Router,
-        options: [
-          dispatch: dispatch(),
-          port: 4000
-        ]
-      ),
-      Registry.child_spec(
-        keys: :duplicate,
-        name: Registry.WebSocketLogger
-      )
-    ]
+  plug(:match)
 
-    opts = [strategy: :one_for_one, name: Xirsys.XTurn.WebSocketLogger]
-    Supervisor.start_link(children, opts)
+  plug(
+    Plug.Parsers,
+    parsers: [:json],
+    pass: ["application/json"],
+    json_decoder: Jason
+  )
+
+  plug(:dispatch)
+
+  EEx.function_from_file(:defp, :application_html, "lib/templates/application.html.eex", [])
+
+  get "/" do
+    send_resp(conn, 200, application_html())
   end
 
-  defp dispatch do
-    [
-      {:_,
-       [
-         {"/ws/[...]", Xirsys.XTurn.WebSocketLogger.SocketHandler, []},
-         {:_, Plug.Cowboy.Handler, {Xirsys.XTurn.WebSocketLogger.Router, []}}
-       ]}
-    ]
+  match _ do
+    send_resp(conn, 404, "404")
   end
 end

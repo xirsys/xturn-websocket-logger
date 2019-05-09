@@ -29,6 +29,8 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
   require Logger
   @vsn "0"
 
+  alias Xirsys.XTurn.WebSocketLogger.SocketHandler
+
   #########################################################################################################################
   # Interface functions
   #########################################################################################################################
@@ -46,6 +48,15 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
   end
 
   def handle_cast({:process_message, data}, state) do
+    Registry.WebSocketLogger
+    |> Registry.dispatch(SocketHandler.key(), fn entries ->
+      for {pid, _} <- entries do
+        if pid != self() do
+          Process.send(pid, Jason.encode!(data), [])
+        end
+      end
+    end)
+
     {:noreply, state}
   end
 

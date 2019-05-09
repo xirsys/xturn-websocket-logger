@@ -21,11 +21,17 @@ defmodule XTurn.WebSocketLogger.MixProject do
   end
 
   def application do
-    [mod: {Xirsys.XTurn.WebSocketLogger.Supervisor, []}, applications: []]
+    [mod: {Xirsys.XTurn.WebSocketLogger.Supervisor, []}, extra_applications: [:logger]]
   end
 
   defp deps do
-    []
+    [
+      {:cowboy, "~> 2.4"},
+      {:plug, "~> 1.7"},
+      {:plug_cowboy, "~> 2.0"},
+      {:jason, "~> 1.1"},
+      {:gproc, "~> 0.8.0"}
+    ]
   end
 
   defp package do
