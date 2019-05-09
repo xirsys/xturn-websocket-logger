@@ -49,7 +49,7 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
     {:ok, %{}}
   end
 
-  def handle_cast({:process_message, data}, state) do
+  def handle_cast({:process_message, _sender, data}, state) do
     Registry.WebSocketLogger
     |> Registry.dispatch(SocketHandler.key(), fn entries ->
       for {pid, _} <- entries do
@@ -67,7 +67,7 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
   end
 
   defp parse_msg(%Xirsys.Sockets.Conn{
-         client_ip: {a, b, c, d},
+         client_ip: ip,
          client_port: cport,
          message: <<@stun_marker::2, _::14, _rest::binary>> = msg
        }) do
@@ -75,13 +75,14 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
       {:ok, dec_msg} ->
         %{
           type: "stun",
-          client_ip: "#{a}.#{b}.#{c}.#{d}",
+          client_ip: parse_ip(ip),
           client_port: cport,
-          message: "#{inspect(dec_msg)}"
+          message: Stun.as_string(dec_msg)
         }
         |> Jason.encode!()
-    else
-      _ -> "Failed to parse message"
+
+      _ ->
+        "Failed to parse message"
     end
   end
 
@@ -91,9 +92,14 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
          message: <<1::2, _num::14, _length::16, _rest::binary>>
        }),
        do:
-         %{type: "channel", client_ip: "#{a}.#{b}.#{c}.#{d}", client_port: cport}
+         %{type: "channel_data", client_ip: "#{a}.#{b}.#{c}.#{d}", client_port: cport}
          |> Jason.encode!()
 
   defp parse_msg(msg) when is_binary(msg), do: msg
   defp parse_msg(msg), do: "TODO, #{inspect(msg)}"
+
+  defp parse_ip({i0, i1, i2, i3}), do: "#{i0}.#{i1}.#{i2}.#{i3}"
+
+  defp parse_ip({i0, i1, i2, i3, i4, i5, i6, i7}),
+    do: "#{i0}:#{i1}:#{i2}:#{i3}:#{i4}:#{i5}:#{i6}:#{i7}"
 end
