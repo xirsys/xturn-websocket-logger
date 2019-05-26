@@ -16,6 +16,8 @@
           link.textContent = `${obj.sender} ${obj.type} [${obj.client_ip}:${obj.client_port}]`
         }
 
+        link.className = obj.sender;
+
         link.addEventListener("click", function(ev) {
           const code = ev.target.nextSibling;
           if (code.style.display === "none") {

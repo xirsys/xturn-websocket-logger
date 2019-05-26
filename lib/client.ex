@@ -70,7 +70,7 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
   # Private functions
   #########################################################################################################################
 
-  defp parse_msg(%Xirsys.Sockets.Conn{
+  defp parse_msg(%{
          client_ip: ip,
          client_port: cport,
          message: <<@stun_marker::2, _::14, _rest::binary>> = msg
@@ -91,7 +91,7 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
     end
   end
 
-  defp parse_msg(%Xirsys.Sockets.Conn{
+  defp parse_msg(%{
          client_ip: ip,
          client_port: cport,
          message: <<1::2, _num::14, _length::16, _rest::binary>>

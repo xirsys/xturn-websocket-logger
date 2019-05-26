@@ -27,3 +27,11 @@ code {
   background-color: #2d2d2d;
   padding: 0 1em 0 1em;
 }
+
+.client {
+  color: #a6e22e;
+}
+
+.peer {
+  color: #ffd700;
+}
