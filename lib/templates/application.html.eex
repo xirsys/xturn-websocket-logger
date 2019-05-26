@@ -2,19 +2,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <script type="application/javascript" defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/prism.min.js"></script>
     <script type="application/javascript" defer="defer" src="js/application.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
     <title>
-      My WebSocket App
+      XTurn Websocket Logger
     </title>
   </head>
   <body>
-    <main id="main"></main>
-    <br>
-    <form>
-      <input id="message" type="text">
-      <br>
-      <br>
-      <input type="submit" value="send" id="button">
-    </form>
-  </body>
+    <header>
+      <img src="images/xirsys.svg" alt="Xirsys WebRTC Cloud" />
+    </header>
+    <div id="main"></div>
 </html>

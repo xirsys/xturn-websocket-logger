@@ -1,0 +1,29 @@
+body {
+  background-color: #eee;
+}
+
+header img {
+  height: 50px;
+}
+
+pre[class*=language-] {
+  padding: 0;
+}
+
+div {
+  padding: 1em;
+}
+
+a {
+  cursor: pointer;
+}
+
+code {
+  display: none;
+  margin-bottom: 1em;
+}
+
+#main {
+  background-color: #2d2d2d;
+  padding: 0 1em 0 1em;
+}

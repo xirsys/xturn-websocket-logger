@@ -49,12 +49,12 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
     {:ok, %{}}
   end
 
-  def handle_cast({:process_message, _sender, data}, state) do
+  def handle_cast({:process_message, sender, data}, state) do
     Registry.WebSocketLogger
     |> Registry.dispatch(SocketHandler.key(), fn entries ->
       for {pid, _} <- entries do
         if pid != self() do
-          Process.send(pid, parse_msg(data), [])
+          Process.send(pid, parse_msg(data, sender), [])
         end
       end
     end)
@@ -66,18 +66,23 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
     {:ok, state}
   end
 
+  #########################################################################################################################
+  # Private functions
+  #########################################################################################################################
+
   defp parse_msg(%Xirsys.Sockets.Conn{
          client_ip: ip,
          client_port: cport,
          message: <<@stun_marker::2, _::14, _rest::binary>> = msg
-       }) do
-    case Stun.decode(msg) do
+       }, sender) do
+    case Stun.pretty(msg) do
       {:ok, dec_msg} ->
         %{
           type: "stun",
+          sender: sender,
           client_ip: parse_ip(ip),
           client_port: cport,
-          message: Stun.as_string(dec_msg)
+          message: dec_msg
         }
         |> Jason.encode!()
 
@@ -87,16 +92,21 @@ defmodule Xirsys.XTurn.WebSocketLogger.Client do
   end
 
   defp parse_msg(%Xirsys.Sockets.Conn{
-         client_ip: {a, b, c, d},
+         client_ip: ip,
          client_port: cport,
          message: <<1::2, _num::14, _length::16, _rest::binary>>
-       }),
+       }, sender),
        do:
-         %{type: "channel_data", client_ip: "#{a}.#{b}.#{c}.#{d}", client_port: cport}
+         %{
+           type: "channel_data",
+           sender: sender,
+           client_ip: parse_ip(ip),
+           client_port: cport
+         }
          |> Jason.encode!()
 
-  defp parse_msg(msg) when is_binary(msg), do: msg
-  defp parse_msg(msg), do: "TODO, #{inspect(msg)}"
+  defp parse_msg(msg, sender) when is_binary(msg), do: "#{sender}: #{inspect msg}"
+  defp parse_msg(msg, sender), do: "TODO, #{sender}: #{inspect(msg)}"
 
   defp parse_ip({i0, i1, i2, i3}), do: "#{i0}.#{i1}.#{i2}.#{i3}"
 
