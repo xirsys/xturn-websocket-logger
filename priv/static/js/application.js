@@ -11,9 +11,9 @@
 
         const dTag = document.createElement("div"), link = document.createElement("a");
         if (obj.type == "stun") {
-          link.textContent = `${obj.sender} - ${obj.type}: ${obj.message.class} - ${obj.message.method} [${obj.client_ip}:${obj.client_port}]`;
+          link.textContent = `${obj.sender} ${obj.type}: ${obj.message.method} ${obj.message.class} [${obj.client_ip}:${obj.client_port}]`;
         } else {
-          link.textContent = `${obj.sender} - ${obj.type} [${obj.client_ip}:${obj.client_port}]`
+          link.textContent = `${obj.sender} ${obj.type} [${obj.client_ip}:${obj.client_port}]`
         }
 
         link.addEventListener("click", function(ev) {
