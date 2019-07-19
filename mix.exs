@@ -11,10 +11,10 @@ defmodule XTurn.WebSocketLogger.MixProject do
       deps: deps(),
       description: "Websocket based logging platform for the XTurn server.",
       source_url: "https://github.com/xirsys/xturn-websocket-logger",
-      homepage_url: "https://xirsys.github.io/xturn/",
+      homepage_url: "https://xturn.me",
       package: package(),
       docs: [
-        extras: ["README.md"],
+        extras: ["README.md", "LICENSE"],
         main: "readme"
       ]
     ]
@@ -38,6 +38,7 @@ defmodule XTurn.WebSocketLogger.MixProject do
     %{
       maintainers: ["Jahred Love"],
       licenses: ["Apache 2.0"],
+      organization: ["Xirsys"],
       links: %{"Github" => "https://github.com/xirsys/xturn-websocket-logger"}
     }
   end
